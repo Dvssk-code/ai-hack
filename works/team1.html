@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Работа команды 1</title>
+<style>
+body{margin:0;background:#0a0f1e;color:#fff;font-family:Arial;display:flex;justify-content:center}
+.wrap{text-align:center;padding:20px}
+h1{color:#0ff}
+.hud{font-size:20px;margin-bottom:10px;color:#8be}
+canvas{border:2px solid #0ff;box-shadow:0 0 20px rgba(0,255,255,.35)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🐍 Змейка</h1>
+  <div class="hud">Счёт: <span id="score">?</span></div>
+  <canvas id="cv" width="400" height="400"></canvas>
+</div>
+<script>
+var cv=document.getElementById("cv"),x=cv.getContext("2d");
+var N=20,CS=20,snake,dir,food,loop;
+function spawn(){var p;do{p={x:Math.random()*N|0,y:Math.random()*N|0};}while(snake.some(function(s){return s.x===p.x&&s.y===p.y;}));return p;}
+function reset(){snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];dir={x:1,y:0};food=spawn();}
+function tick(){
+  var h={x:(snake[0].x+dir.x+N)%N,y:(snake[0].y+dir.y+N)%N};
+  snake.unshift(h);
+  if(h.x===food.x&&h.y===food.y){food=spawn();}else{snake.pop();}
+  draw();
+}
+function draw(){
+  x.fillStyle="#0a0f1e";x.fillRect(0,0,400,400);
+  x.fillStyle="#f0f";x.fillRect(food.x*CS+2,food.y*CS+2,CS-4,CS-4);
+  x.fillStyle="#0ff";
+  snake.forEach(function(s){x.fillRect(s.x*CS+1,s.y*CS+1,CS-2,CS-2);});
+}
+document.addEventListener("keydown",function(e){
+  var k=e.key;
+  if(k==="ArrowUp")dir={x:0,y:1};
+  else if(k==="ArrowDown")dir={x:0,y:-1};
+  else if(k==="ArrowLeft")dir={x:-1,y:0};
+  else if(k==="ArrowRight")dir={x:1,y:0};
+});
+reset();loop=setInterval(tick,120);
+</script>
+</body>
+</html>
