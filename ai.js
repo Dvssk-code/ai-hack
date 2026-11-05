@@ -10,9 +10,16 @@ const AI_SYSTEM_PROMPT = (task) =>
   "Обязательные пункты задания:\n" + task.must.map(m => "- " + m).join("\n") + "\n\n" +
   "Правила: отвечай кратко и по делу. Когда даёшь код — только в виде одного полного HTML-файла в блоке ```html ... ``` (весь CSS и JS внутри), без внешних библиотек. Помогай довести приложение до ума, но не делай за команду то, что она должна понять сама.";
 
+function yandexModelUri() {
+  const a = CONFIG.ai || {};
+  return (a.yandex && String(a.yandex.modelUri || "")) || "";
+}
+
 function aiConfigured() {
   const a = CONFIG.ai || {};
-  return !!(a.apiKey && !String(a.apiKey).includes("ВСТАВЬ"));
+  if (!a.apiKey || String(a.apiKey).includes("ВСТАВЬ")) return false;
+  if (a.provider === "yandex" && yandexModelUri().includes("XXXX")) return false;
+  return true;
 }
 
 // messages: [{role, content}]
@@ -21,23 +28,33 @@ async function askAI(messages) {
   if (!aiConfigured()) throw new Error("API_KEY_NOT_SET");
 
   if (a.provider === "yandex") {
-    const folder = a.yandex.folderId;
-    if (!folder || String(folder).includes("b1g...")) throw new Error("YANDEX_FOLDER_NOT_SET");
+    const modelUri = yandexModelUri();
+    if (!modelUri || modelUri.includes("XXXX")) throw new Error("YANDEX_MODEL_NOT_SET");
+    // API-ключ сервисного аккаунта (начинается с AQVN) — заголовок Api-Key;
+    // IAM-токен — Bearer.
+    const isApiKey = String(a.apiKey).trim().startsWith("AQVN");
     const r = await fetch("https://llm.api.cloud.yandex.net/foundationModels/v1/completion", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + a.apiKey
+        "Authorization": (isApiKey ? "Api-Key " : "Bearer ") + a.apiKey
       },
       body: JSON.stringify({
-        modelUri: "gpt://ai/cloud/" + folder + "/" + a.yandex.model,
-        completionOptions: { stream: false, temperature: 0.7 },
-        messages: messages
+        modelUri: modelUri,
+        completionOptions: { stream: false, temperature: 0.7, maxTokens: 4096 },
+        messages: messages.map(m => ({ role: m.role, text: m.content }))
       })
     });
-    if (!r.ok) throw new Error("Yandex API " + r.status);
+    if (!r.ok) {
+      let detail = "";
+      try { const ej = await r.json(); detail = (ej.message || "") + " "; } catch (e) {}
+      throw new Error("Yandex API " + r.status + " " + detail);
+    }
     const j = await r.json();
-    return (j.result && j.result.alternatives && j.result.alternatives[0] && j.result.alternatives[0].content) || { text: "(пустой ответ)" }.text;
+    const alt = j.result && j.result.alternatives && j.result.alternatives[0];
+    const text = alt && ((alt.message && alt.message.text) || (alt.content && alt.content.text));
+    if (!text) throw new Error("Yandex API: пустой ответ");
+    return text;
   }
 
   // OpenAI-совместимый
