@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-Hack · Твоя команда</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg"></div>
+<header class="top">
+  <div class="logo">🚀 <b>AI-Hack</b> <span class="muted" style="font-size:13px">— собери веб-приложение за 15 минут</span></div>
+  <div>
+    <span class="chip" id="groupChip" hidden>команда <b id="groupNum"></b></span>
+    <span class="chip" id="timerChip">⏱ —</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- ЭКРАН 1: выбор группы -->
+  <section id="scrGroup">
+    <h1>Собери веб-приложение<br><span class="grad">за 15 минут</span></h1>
+    <p class="lead">Преподаватель называет номер вашей группы — нажми его. Каждый номер получает своё задание,
+      нейронка уже ждёт в чате справа. Вдох-выдох, поехали. 🧠</p>
+    <div class="group-grid" id="groupGrid"></div>
+    <div class="card">
+      <h3>🧭 Как это работает</h3>
+      <ol style="line-height:1.9">
+        <li>Левая половина — <b>редактор кода</b> (вкладки HTML / CSS / JS). Кнопка <b>▶ Запустить</b> откроет твоё приложение в новой вкладке.</li>
+        <li>Правая половина — <b>нейронка</b>. Описываешь, что нужно — она пишет код. Кнопка <b>⚡ Вставить в редактор</b> закидывает код к тебе.</li>
+        <li>Проверил, что работает — жмёшь <b>📤 Отправить</b>. Работа улетает на GitHub, на экране появляется <b>QR-код</b> — он же у преподавателя на большом экране.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ЭКРАН 2: работа -->
+  <section id="scrWork" hidden>
+    <div class="task-head card">
+      <div class="task-emoji" id="tEmoji"></div>
+      <div style="flex:1;min-width:260px">
+        <h2 id="tTitle" style="margin:0"></h2>
+        <div class="muted" id="tDesc"></div>
+        <details class="req" open>
+          <summary>Обязательно (жюри проверяет каждый пункт)</summary>
+          <ul id="tMust"></ul>
+        </details>
+      </div>
+    </div>
+
+    <div class="panes">
+      <!-- ЛЕВО: IDE -->
+      <div class="card pane">
+        <div class="pane-head">
+          <div class="pane-title">🛠 РЕДАКТОР</div>
+          <div class="actions" style="margin:0">
+            <button class="btn sm" id="runBtn" type="button">▶ Запустить</button>
+            <button class="btn sm ghost" id="clearBtn" type="button">🧹 Очистить</button>
+          </div>
+        </div>
+        <div class="ed-tabs" id="edTabs">
+          <button class="ed-tab on" data-ed="html" type="button">index.html</button>
+          <button class="ed-tab" data-ed="css" type="button">style.css</button>
+          <button class="ed-tab" data-ed="js" type="button">script.js</button>
+        </div>
+        <textarea class="editor" id="ed-html" spellcheck="false" placeholder="<!-- HTML: структура страницы (то, что внутри <body>) -->"></textarea>
+        <textarea class="editor" id="ed-css" spellcheck="false" hidden placeholder="/* CSS: стили */"></textarea>
+        <textarea class="editor" id="ed-js" spellcheck="false" hidden placeholder="// JS: логика"></textarea>
+        <div class="err" id="submitErr"></div>
+        <button class="btn big" id="submitBtn" type="button">📤 Проверили, работает — отправить работу</button>
+      </div>
+
+      <!-- ПРАВО: нейронка -->
+      <div class="card pane">
+        <div class="pane-head">
+          <div class="pane-title">🤖 НЕЙРОНКА</div>
+          <span class="chip" id="aiState">сценарий активен</span>
+        </div>
+        <div class="chat">
+          <div class="chat-msgs" id="chatMsgs"></div>
+          <div class="typing" id="typing" hidden>нейронка печатает…</div>
+          <div class="chat-in">
+            <input type="text" id="chatInput" placeholder="Опиши, что нужно нейронке…">
+            <button class="btn" id="chatSend" type="button">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЭКРАН 3: сдано -->
+  <section id="scrDone" hidden>
+    <div class="card done-box">
+      <div class="big-emoji">🎉</div>
+      <h2>Работа сдана!</h2>
+      <p class="muted" id="doneText">QR-код вашей работы. Покажите его преподавателю — он же уже на большом экране.<br>
+      Если ссылка пока не открывается — GitHub Pages собирает ~1 минуту, подожди и обнови.</p>
+      <div class="qr-wrap" id="doneQr"></div>
+      <div class="muted" id="doneUrl"></div>
+      <div class="actions" style="justify-content:center">
+        <button class="btn" id="dlCopy" type="button">💾 Скачать копию (.html)</button>
+        <a class="btn ghost" id="openWork" target="_blank" href="#">🌐 Открыть работу</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="foot">нейронка издевается по сценарию — это нормально. К 3-й попытке всё встанет на свои места 😉</footer>
+<div id="toast"></div>
+
+<script src="tasks.js"></script>
+<script src="config.js"></script>
+<script src="ai.js"></script>
+<script src="bot.js"></script>
+<script src="github.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
