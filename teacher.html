@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-Hack · Экран преподавателя</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg"></div>
+<header class="top">
+  <div class="logo">📺 <b>Экран преподавателя</b></div>
+  <div class="actions" style="margin:0">
+    <a class="btn ghost sm" href="index.html">страница учеников</a>
+    <button class="btn ghost sm" id="refreshBtn" type="button">🔄 Обновить</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <h1>Работы команд <span class="grad">в реальном времени</span></h1>
+  <p class="lead" id="ghStatus">Подключаюсь к GitHub…</p>
+
+  <div class="tv-grid" id="teamGrid"></div>
+
+  <div class="card" style="margin-top:22px">
+    <h3>🎓 Демо нейронки (по скрипту, без API — токены не тратятся)</h3>
+    <div class="demo-note">Покажите классу, как это работает: жмите «▶ Прогнать демо» — нейронка пройдёт весь свой
+      сценарий: кривой код → почти → «я другая нейронка, вот промпт» → рабочее приложение.</div>
+    <div class="actions" style="margin:0 0 12px">
+      <button class="btn" id="demoRun" type="button">▶ Прогнать демо (команда 1)</button>
+      <button class="btn ghost" id="demoReset" type="button">🧹 Сбросить демо</button>
+    </div>
+    <div class="chat" style="max-height:460px">
+      <div class="chat-msgs" id="demoMsgs"></div>
+      <div class="typing" id="demoTyping" hidden>нейронка печатает…</div>
+      <div class="chat-in">
+        <input type="text" id="demoInput" placeholder="Можно писать и вручную…">
+        <button class="btn" id="demoSend" type="button">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3>📋 Как проходит занятие</h3>
+    <table class="sched">
+      <tr><th>Время</th><th>Что происходит</th></tr>
+      <tr><td><b>0–3 мин</b></td><td>Показываете демо нейронки (сверху). Раздаёте команды номера: группа 1 → задание 1, группа 2 → задание 2, группа 3 → задание 3.</td></tr>
+      <tr><td><b>3–18 мин</b></td><td>Команды работают: нейронка издевается 2 раза, на 3-й попытке выдаёт промпт, дальше — рабочее приложение. Команды запускают и проверяют.</td></tr>
+      <tr><td><b>18–22 мин</b></td><td>Команды жмут «📤 Отправить» — работы летят на GitHub, на этом экране появляются QR-коды (по 1 на команду).</td></tr>
+      <tr><td><b>22–35 мин</b></td><td>Жюри/класс открывает QR-коды (телефоны или этот же экран) и тестирует работы руками. Побеждает самая рабочая + самая креативная.</td></tr>
+    </table>
+  </div>
+</div>
+
+<footer class="foot">работы обновляются автоматически каждые 8 секунд</footer>
+<script src="tasks.js"></script>
+<script src="config.js"></script>
+<script src="ai.js"></script>
+<script src="bot.js"></script>
+<script src="github.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+<script src="teacher.js"></script>
+</body>
+</html>
