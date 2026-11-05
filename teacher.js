@@ -92,6 +92,12 @@ $("#startBtn").onclick = async () => {
     $("#startStatus").textContent = "занятие стартовало в " + new Date().toLocaleTimeString() + " · работы очищены";
     toast("Занятие запущено");
     await pollWorks();
+    // Pages подхватит файл старта после сборки — дожидаемся для статуса
+    for (let i = 0; i < 12; i++) {
+      await sleep(8000);
+      const s = await ghReadStart();
+      if (s) { $("#startStatus").textContent = "занятие стартовало в " + new Date(s.start).toLocaleTimeString() + " · страницы команд синхронизированы"; break; }
+    }
   } catch (e) {
     $("#startStatus").textContent = "Ошибка: " + e.message;
   }
