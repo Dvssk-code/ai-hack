@@ -100,11 +100,11 @@ function showPreview(url){
   ov = document.createElement("div");
   ov.id = "previewOv";
   ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px";
-  ov.innerHTML = "<div style='background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 22px;text-align:center;box-shadow:var(--shadow-lg)'>" +
+  ov.innerHTML = "<div style='background:#fff;border:1px solid var(--line);border-radius:6px;padding:14px 22px;text-align:center;box-shadow:var(--shadow-lg)'>" +
     "<b>Превью твоего приложения</b> <span class='muted'>(браузер заблокировал новую вкладку)</span><br>" +
     "<button class='btn sm' style='margin-top:10px'>🌐 Всё-таки открыть в новой вкладке</button>" +
     "<button class='btn sm ghost' style='margin-top:10px'>✖ Закрыть</button></div>" +
-    "<iframe src='" + url + "' style='width:min(900px,92vw);height:min(560px,60vh);border-radius:14px;background:#fff;border:1px solid var(--line)'></iframe>";
+    "<iframe src='" + url + "' style='width:min(900px,92vw);height:min(560px,60vh);border-radius:6px;background:#fff;border:1px solid var(--line)'></iframe>";
   document.body.appendChild(ov);
   ov.querySelector("button").onclick = () => { window.open(url, "_blank"); ov.remove(); };
   ov.querySelectorAll("button")[1].onclick = () => ov.remove();
