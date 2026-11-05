@@ -150,9 +150,16 @@
     const st = await ghReadStart();
     if (st) {
       startedAt = st.start;
-    } else {
-      startedAt = +localStorage.getItem("hack_start_g" + teamNo) || Date.now();
-      localStorage.setItem("hack_start_g" + teamNo, String(startedAt));
+      localStorage.removeItem("hack_start_g" + teamNo);
+      return;
+    }
+    startedAt = +localStorage.getItem("hack_start_g" + teamNo) || Date.now();
+    localStorage.setItem("hack_start_g" + teamNo, String(startedAt));
+    // Pages подхватит новый файл старта ~через минуту — дожидаемся и синхронизируемся
+    for (let i = 0; i < 18; i++) {
+      await sleep(10000);
+      const s2 = await ghReadStart();
+      if (s2) { startedAt = s2.start; localStorage.removeItem("hack_start_g" + teamNo); return; }
     }
   })();
   setInterval(() => {
