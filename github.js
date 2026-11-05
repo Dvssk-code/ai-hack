@@ -63,3 +63,66 @@ async function ghListWorks() {
   }
   return { missing: false, works };
 }
+
+// ---- старт занятия: сброс работ + общий таймер ----
+
+// Удалить файл (404 — не ошибка, файла и не было)
+async function ghDelete(path) {
+  const g = CONFIG.github;
+  const url = "https://api.github.com/repos/" + g.owner + "/" + g.repo + "/contents/" + path;
+  const cur = await fetch(url, { headers: ghHeaders() });
+  if (cur.status === 404) return true;
+  if (!cur.ok) throw new Error("GitHub del " + cur.status);
+  const info = await cur.json();
+  const r = await fetch(url, {
+    method: "DELETE",
+    headers: ghHeaders(),
+    body: JSON.stringify({ message: "reset: " + path, sha: info.sha })
+  });
+  if (!r.ok && r.status !== 404) {
+    let msg = "GitHub del " + r.status;
+    try { const j = await r.json(); if (j.message) msg += ": " + j.message; } catch (e) {}
+    throw new Error(msg);
+  }
+  return true;
+}
+
+// Сбросить работы всех трёх команд
+async function ghResetWorks() {
+  for (let n = 1; n <= 3; n++) await ghDelete("works/team" + n + ".html");
+}
+
+// Записать файл старта занятия (его читают страницы команд — общий таймер)
+async function ghSetStart() {
+  const g = CONFIG.github;
+  const payload = JSON.stringify({ start: Date.now(), id: "S" + Date.now().toString(36) });
+  const url = "https://api.github.com/repos/" + g.owner + "/" + g.repo + "/contents/works/starts.json";
+  let sha;
+  const cur = await fetch(url, { headers: ghHeaders() });
+  if (cur.ok) sha = (await cur.json()).sha;
+  else if (cur.status !== 404) throw new Error("GitHub start " + cur.status);
+  const r = await fetch(url, {
+    method: "PUT",
+    headers: ghHeaders(),
+    body: JSON.stringify({ message: "lesson start " + new Date().toISOString(), content: b64(payload), sha: sha })
+  });
+  if (!r.ok) {
+    let msg = "GitHub start " + r.status;
+    try { const j = await r.json(); if (j.message) msg += ": " + j.message; } catch (e) {}
+    throw new Error(msg);
+  }
+  return payload;
+}
+
+// Прочитать файл старта (статика Pages, с cache-bust) — для синхронизации таймера
+async function ghReadStart() {
+  const g = CONFIG.github;
+  if (!g.pagesBase) return null;
+  try {
+    const r = await fetch(g.pagesBase.replace(/\/?$/, "/") + "works/starts.json?_=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) return null;
+    const j = await r.json();
+    if (typeof j.start === "number" && (Date.now() - j.start) < 36 * 3600 * 1000) return j;
+    return null; // старше суток — считаем старое
+  } catch (e) { return null; }
+}
