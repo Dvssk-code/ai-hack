@@ -3,116 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI-Hack · Твоя команда</title>
+<title>AI-Hack · Пульт преподавателя</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="bg"></div>
 <header class="top">
-  <div class="logo">🚀 <b>AI-Hack</b> <span class="muted" style="font-size:13px">— собери веб-приложение за 15 минут</span></div>
-  <div>
-    <span class="chip" id="groupChip" hidden>команда <b id="groupNum"></b></span>
-    <span class="chip" id="timerChip">⏱ —</span>
+  <div class="logo">🛰 <b>AI-HACK</b> <span class="badge top-badge">PLATFORM v3</span></div>
+  <div class="top-right">
+    <span class="chip mono-line">repo: Dvssk-code/ai-hack</span>
+    <span class="chip" id="ghStatusChip">подключение…</span>
   </div>
 </header>
 
 <div class="wrap">
-  <!-- ЭКРАН 1: выбор группы -->
-  <section id="scrGroup">
-    <h1>Собери веб-приложение<br><span class="grad">за 15 минут</span></h1>
-    <p class="lead">Преподаватель называет номер вашей группы — нажми его. Каждый номер получает своё задание,
-      нейронка уже ждёт в чате справа. Вдох-выдох, поехали. 🧠</p>
-    <div class="group-grid" id="groupGrid"></div>
-    <div class="card">
-      <h3>🧭 Как это работает</h3>
-      <ol style="line-height:1.9">
-        <li>Левая половина — <b>редактор кода</b> (вкладки HTML / CSS / JS). Кнопка <b>▶ Запустить</b> откроет твоё приложение в новой вкладке.</li>
-        <li>Правая половина — <b>нейронка</b>. Описываешь, что нужно — она пишет код. Кнопка <b>⚡ Вставить в редактор</b> закидывает код к тебе.</li>
-        <li>Проверил, что работает — жмёшь <b>📤 Отправить</b>. Работа улетает на GitHub, на экране появляется <b>QR-код</b> — он же у преподавателя на большом экране.</li>
-      </ol>
+  <h1>Пульт оператора хакатона</h1>
+  <p class="lead" id="ghStatus">Подключаюсь к GitHub…</p>
+
+  <!-- 01 · КОМАНДЫ -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2 class="sec-title">Команды</h2>
+      <span class="sec-sub">страницы команд — каждая на своём адресе</span>
+    </div>
+    <div class="teams-grid">
+      <div class="card team-card">
+        <div class="tc-top"><span class="tc-num">1</span><div><b class="tc-title">Змейка для двоих</b><div class="muted">WASD + стрелки · 2 игрока</div></div></div>
+        <div class="tc-row">
+          <div class="qr-small" id="pageQr1"></div>
+          <div class="tc-links">
+            <div class="mono-tag">СТРАНИЦА КОМАНДЫ</div>
+            <a class="btn sm ghost" href="1/" target="_blank">↗ Открыть /1/</a>
+            <div class="muted mono-line tc-url">/ai-hack/1/</div>
+          </div>
+        </div>
+        <div class="tc-status status-wait" id="teamStatus1">работа: ожидание…</div>
+      </div>
+      <div class="card team-card">
+        <div class="tc-top"><span class="tc-num">2</span><div><b class="tc-title">Морской бой</b><div class="muted">флот против компьютера</div></div></div>
+        <div class="tc-row">
+          <div class="qr-small" id="pageQr2"></div>
+          <div class="tc-links">
+            <div class="mono-tag">СТРАНИЦА КОМАНДЫ</div>
+            <a class="btn sm ghost" href="2/" target="_blank">↗ Открыть /2/</a>
+            <div class="muted mono-line tc-url">/ai-hack/2/</div>
+          </div>
+        </div>
+        <div class="tc-status status-wait" id="teamStatus2">работа: ожидание…</div>
+      </div>
+      <div class="card team-card">
+        <div class="tc-top"><span class="tc-num">3</span><div><b class="tc-title">Гоночная машинка</b><div class="muted">физика · монеты · HUD</div></div></div>
+        <div class="tc-row">
+          <div class="qr-small" id="pageQr3"></div>
+          <div class="tc-links">
+            <div class="mono-tag">СТРАНИЦА КОМАНДЫ</div>
+            <a class="btn sm ghost" href="3/" target="_blank">↗ Открыть /3/</a>
+            <div class="muted mono-line tc-url">/ai-hack/3/</div>
+          </div>
+        </div>
+        <div class="tc-status status-wait" id="teamStatus3">работа: ожидание…</div>
+      </div>
     </div>
   </section>
 
-  <!-- ЭКРАН 2: работа -->
-  <section id="scrWork" hidden>
-    <div class="task-head card">
-      <div class="task-emoji" id="tEmoji"></div>
-      <div style="flex:1;min-width:260px">
-        <h2 id="tTitle" style="margin:0"></h2>
-        <div class="muted" id="tDesc"></div>
-        <details class="req" open>
-          <summary>Обязательно (жюри проверяет каждый пункт)</summary>
-          <ul id="tMust"></ul>
-        </details>
-      </div>
+  <!-- 02 · ДЕМО-СТЕНД -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2 class="sec-title">Демо-стенд нейронки</h2>
+      <span class="sec-sub">показ класса · по скрипту · 0 токенов</span>
     </div>
-
-    <div class="panes">
-      <!-- ЛЕВО: IDE -->
+    <div class="demo-note">Показываете классу весь путь: промт №1 → кривой код → промт №2 → «всё чётко» → готовое приложение.
+      Ответы идут с паузой, как у живой нейронки. Промты уже написаны в сценарии — жмите «Прогнать».</div>
+    <div class="actions">
+      <button class="btn" id="demoRun" type="button">▶ Прогнать сценарий</button>
+      <button class="btn ghost" id="demoReset" type="button">🧹 Сбросить демо</button>
+      <span class="badge" id="demoState">ГОТОВ К ПРОГОНУ</span>
+    </div>
+    <div class="panes" style="margin-top:12px">
       <div class="card pane">
         <div class="pane-head">
-          <div class="pane-title">🛠 РЕДАКТОР</div>
+          <div class="pane-title">🛠 ДЕМО-РЕДАКТОР</div>
           <div class="actions" style="margin:0">
-            <button class="btn sm" id="runBtn" type="button">▶ Запустить</button>
-            <button class="btn sm ghost" id="clearBtn" type="button">🧹 Очистить</button>
+            <button class="btn sm" id="demoRunApp" type="button">▶ Запустить</button>
+            <button class="btn sm ghost" id="demoClear" type="button">Очистить</button>
           </div>
         </div>
-        <div class="ed-tabs" id="edTabs">
+        <div class="ed-tabs" id="demoEdTabs">
           <button class="ed-tab on" data-ed="html" type="button">index.html</button>
           <button class="ed-tab" data-ed="css" type="button">style.css</button>
           <button class="ed-tab" data-ed="js" type="button">script.js</button>
         </div>
-        <textarea class="editor" id="ed-html" spellcheck="false" placeholder="<!-- HTML: структура страницы (то, что внутри <body>) -->"></textarea>
-        <textarea class="editor" id="ed-css" spellcheck="false" hidden placeholder="/* CSS: стили */"></textarea>
-        <textarea class="editor" id="ed-js" spellcheck="false" hidden placeholder="// JS: логика"></textarea>
-        <div class="err" id="submitErr"></div>
-        <button class="btn big" id="submitBtn" type="button">📤 Проверили, работает — отправить работу</button>
+        <textarea class="editor" id="demoEdHtml" spellcheck="false" placeholder="<!-- сюда вставится код демо-задачи -->"></textarea>
+        <textarea class="editor" id="demoEdCss" spellcheck="false" hidden placeholder="/* CSS */"></textarea>
+        <textarea class="editor" id="demoEdJs" spellcheck="false" hidden placeholder="// JS"></textarea>
       </div>
-
-      <!-- ПРАВО: нейронка -->
       <div class="card pane">
         <div class="pane-head">
-          <div class="pane-title">🤖 НЕЙРОНКА</div>
-          <span class="chip" id="aiState">🟢 нейронка онлайн</span>
+          <div class="pane-title">🤖 НЕЙРОНКА · ВЕГА</div>
+          <span class="chip">🟢 онлайн</span>
         </div>
         <div class="chat">
-          <div class="chat-msgs" id="chatMsgs"></div>
-          <div class="typing" id="typing" hidden>нейронка печатает…</div>
+          <div class="chat-msgs" id="demoMsgs"></div>
+          <div class="typing" id="demoTyping" hidden>ВЕГА печатает…</div>
           <div class="chat-in">
-            <input type="text" id="chatInput" placeholder="Опиши, что нужно нейронке…">
-            <button class="btn" id="chatSend" type="button">➤</button>
+            <input type="text" id="demoInput" placeholder="Свободный вопрос (демо-режим)…">
+            <button class="btn" id="demoSend" type="button">➤</button>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ЭКРАН 3: сдано -->
-  <section id="scrDone" hidden>
-    <div class="card done-box">
-      <div class="big-emoji">🎉</div>
-      <h2>Работа сдана!</h2>
-      <p class="muted" id="doneText">QR-код вашей работы. Покажите его преподавателю — он же уже на большом экране.<br>
-      Если ссылка пока не открывается — GitHub Pages собирает ~1 минуту, подожди и обнови.</p>
-      <div class="qr-wrap" id="doneQr"></div>
-      <div class="muted" id="doneUrl"></div>
-      <div class="actions" style="justify-content:center">
-        <button class="btn" id="dlCopy" type="button">💾 Скачать копию (.html)</button>
-        <a class="btn ghost" id="openWork" target="_blank" href="#">🌐 Открыть работу</a>
+  <!-- 03 · РАБОТЫ И СТАРТ -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2 class="sec-title">Работы и старт занятия</h2>
+      <span class="sec-sub">QR появляются, когда команды отправляют работы</span>
+    </div>
+    <div class="works-grid">
+      <div class="card work-card" id="workCard1">
+        <div class="mono-tag">РАБОТА · КОМАНДА 1</div>
+        <div class="work-wait" id="workWait1">ОЖИДАНИЕ РАБОТЫ</div>
+        <div class="qr-slot" id="workQr1" hidden></div>
+        <div class="muted mono-line" id="workUrl1"></div>
+      </div>
+      <div class="card work-card" id="workCard2">
+        <div class="mono-tag">РАБОТА · КОМАНДА 2</div>
+        <div class="work-wait" id="workWait2">ОЖИДАНИЕ РАБОТЫ</div>
+        <div class="qr-slot" id="workQr2" hidden></div>
+        <div class="muted mono-line" id="workUrl2"></div>
+      </div>
+      <div class="card work-card" id="workCard3">
+        <div class="mono-tag">РАБОТА · КОМАНДА 3</div>
+        <div class="work-wait" id="workWait3">ОЖИДАНИЕ РАБОТЫ</div>
+        <div class="qr-slot" id="workQr3" hidden></div>
+        <div class="muted mono-line" id="workUrl3"></div>
+      </div>
+    </div>
+    <div class="card start-card">
+      <div class="start-left">
+        <div class="mono-tag">УПРАВЛЕНИЕ ЗАНЯТИЕМ</div>
+        <h3>Старт занятия</h3>
+        <p class="muted">Сбросит работы всех трёх команд и запишет новое время старта — страницы команд подхватят общий таймер 15:00 при открытии и обновлении.</p>
+      </div>
+      <div class="start-right">
+        <button class="btn big" id="startBtn" type="button">🚀 Начать занятие</button>
+        <div class="muted mono-line" id="startStatus">занятие ещё не стартовало</div>
+        <div class="mono-line start-timer" id="lessonTimer"></div>
       </div>
     </div>
   </section>
 </div>
 
-<footer class="foot">AI-Hack · курс веб-разработки · 15 минут на задание</footer>
+<footer class="foot">AI-HACK PLATFORM · пульт оператора · работы обновляются каждые 8 секунд</footer>
 <div id="toast"></div>
 
 <script src="tasks.js"></script>
 <script src="config.js"></script>
+<script src="github.js"></script>
 <script src="ai.js"></script>
 <script src="bot.js"></script>
-<script src="github.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-<script src="app.js"></script>
+<script src="teacher.js"></script>
 </body>
 </html>
