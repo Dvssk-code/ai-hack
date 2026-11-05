@@ -196,7 +196,7 @@ async function sendChat(text){
     const res = await botSend(myGroup, text, false);
     $("#typing").hidden = true;
     if(res.kind === "api" || res.kind === "off"){
-      $("#aiState").textContent = res.kind === "api" ? "🤖 нейронка (API)" : "⚠️ API не подключён";
+      $("#aiState").textContent = res.kind === "api" ? "🟢 нейронка онлайн" : "🟡 нейронка перезагружается";
     }
     addBot(res.text, res.code || null, res);
   } catch(e){
