@@ -94,7 +94,7 @@ function demoAddBot(text, code, meta){
     sum.style.cursor = "pointer";
     det.appendChild(sum);
     const pre = document.createElement("pre");
-    pre.style.cssText = "white-space:pre-wrap;word-break:break-word;font-size:12px;background:rgba(0,0,0,.4);border-radius:8px;padding:10px;max-height:240px;overflow:auto";
+    pre.style.cssText = "white-space:pre-wrap;word-break:break-word;font-size:12px;background:#f1efe7;border:1px solid var(--line);border-radius:8px;padding:10px;max-height:240px;overflow:auto;color:#4a4437";
     pre.textContent = "/* ===== index.html ===== */\n" + code.html + "\n\n/* ===== style.css ===== */\n" + code.css + "\n\n/* ===== script.js ===== */\n" + code.js;
     det.appendChild(pre);
     d.appendChild(det);
