@@ -24,6 +24,15 @@ function pageQr(id) {
 }
 [1, 2, 3].forEach(pageQr);
 
+// ---------- единая ссылка для студентов ----------
+(function () {
+  const urlEl = $("#rootUrl");
+  const root = BASE.replace(/\/$/, "");
+  if (urlEl) urlEl.textContent = root;
+  const box = $("#rootQr");
+  if (box && window.QRCode) new QRCode(box, { text: root, width: 110, height: 110, correctLevel: QRCode.CorrectLevel.M });
+})();
+
 // ---------- 03 · работы ----------
 function workUrl(id) { return BASE + "works/team" + id + ".html"; }
 function renderWork(id, meta) {
