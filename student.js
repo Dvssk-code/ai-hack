@@ -9,7 +9,7 @@
 
   const teamNo = window.TEAM || (location.pathname.match(/\/(\d)(?:\/|$)/) || [])[1] * 1 || 0;
   if (!teamNo || teamNo < 1 || teamNo > 3) {
-    document.body.innerHTML = "<div style='padding:60px;text-align:center;font-family:Segoe UI,sans-serif;color:#44546a'>Неизвестная команда. <a href='../'>← Пульт преподавателя</a></div>";
+    document.body.innerHTML = "<div style='padding:60px;text-align:center;font-family:Segoe UI,sans-serif;color:#44546a'>Неизвестная команда. <a href='../'>← На главную</a></div>";
     return;
   }
   const task = taskById(teamNo);
