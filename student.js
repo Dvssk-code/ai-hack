@@ -120,28 +120,39 @@
       "<title>Работа команды " + teamNo + "</title>\n<style>\n" + c + "\n</style>\n</head>\n<body>\n" +
       h + "\n<script>\n" + j + "\n<\/script>\n</body>\n</html>";
   }
+  // «▶ Запустить» — превью прямо на странице (iframe), без новых вкладок:
+  // так игра открывается всегда, даже если браузер блокирует window.open
   $("#runBtn").onclick = () => {
     const full = assemble();
     if (full.length < 400) { toast("Сначала вставь код (у нейронки справа есть кнопка «⚡ Вставить»)"); return; }
-    const url = URL.createObjectURL(new Blob([full], { type: "text/html" }));
-    const w = window.open(url, "_blank");
-    if (w) toast("Открыл в новой вкладке. Проверь, что всё работает!");
-    else showPreview(url);
+    showPreview(full);
   };
-  function showPreview(url) {
+  function showPreview(full) {
     let ov = document.getElementById("previewOv");
     if (ov) ov.remove();
     ov = document.createElement("div");
     ov.id = "previewOv";
-    ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px";
-    ov.innerHTML = "<div style='background:#fff;border:1px solid var(--line);border-radius:6px;padding:14px 22px;text-align:center;box-shadow:var(--shadow-lg)'>" +
-      "<b>Превью твоего приложения</b> <span class='muted'>(браузер заблокировал новую вкладку)</span><br>" +
-      "<button class='btn sm' style='margin-top:10px'>🌐 Всё-таки открыть в новой вкладке</button>" +
-      "<button class='btn sm ghost' style='margin-top:10px'>✖ Закрыть</button></div>" +
-      "<iframe src='" + url + "' style='width:min(900px,92vw);height:min(560px,60vh);border-radius:6px;background:#fff;border:1px solid var(--line)'></iframe>";
+    ov.style.cssText = "position:fixed;inset:0;z-index:200;background:#0d1117;display:flex;flex-direction:column";
+    ov.innerHTML =
+      "<div style='display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--navy);flex-wrap:wrap'>" +
+      "  <b style='color:#fff;font-size:14px;letter-spacing:1px'>▶ ПРЕВЬЮ ПРИЛОЖЕНИЯ</b>" +
+      "  <span style='color:#9fb4d8;font-size:12px'>так работа будет выглядеть на отдельной странице</span>" +
+      "  <span style='flex:1'></span>" +
+      "  <button class='btn sm' id='pvNew' type='button'>↗ Новая вкладка</button>" +
+      "  <button class='btn sm ghost' id='pvClose' type='button'>✖ Закрыть</button>" +
+      "</div>" +
+      "<iframe style='flex:1;width:100%;border:0;background:#fff'></iframe>";
     document.body.appendChild(ov);
-    ov.querySelector("button").onclick = () => { window.open(url, "_blank"); ov.remove(); };
-    ov.querySelectorAll("button")[1].onclick = () => ov.remove();
+    ov.querySelector("iframe").srcdoc = full;
+    ov.querySelector("#pvClose").onclick = () => ov.remove();
+    ov.querySelector("#pvNew").onclick = () => {
+      const url = URL.createObjectURL(new Blob([full], { type: "text/html" }));
+      const w = window.open(url, "_blank");
+      if (w) toast("Открыл в новой вкладке");
+    };
+    document.addEventListener("keydown", function h(e) {
+      if (e.key === "Escape") { ov.remove(); document.removeEventListener("keydown", h); }
+    });
   }
 
   // ================= таймер (синхрон с пультом препода) =================
