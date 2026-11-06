@@ -72,6 +72,7 @@ setInterval(pollWorks, 8000);
 
 // ---------- старт занятия ----------
 let lessonStart = 0;
+let startingWait = false;
 async function readStart() {
   const st = await ghReadStart();
   if (st) {
@@ -84,7 +85,8 @@ async function readStart() {
 }
 readStart();
 // пульт мог быть открыт до старта — подхватываем файл старта после сборки Pages
-setInterval(() => { if (!lessonStart) readStart(); }, 20000);
+// (не мешает фазе «идёт ресет» после нажатия кнопки)
+setInterval(() => { if (!lessonStart && !startingWait) readStart(); }, 20000);
 setInterval(() => {
   if (!lessonStart) return;
   const left = CONFIG.timeLimit * 60 * 1000 - (Date.now() - lessonStart);
@@ -94,24 +96,39 @@ setInterval(() => {
 $("#startBtn").onclick = async () => {
   if (!confirm("Сбросить работы всех трёх команд и запустить общий таймер " + CONFIG.timeLimit + ":00?")) return;
   const btn = $("#startBtn");
-  btn.disabled = true; btn.textContent = "Стартую…";
-  $("#startStatus").textContent = "сбрасываю работы…";
+  btn.disabled = true; btn.textContent = "Ресетим…";
+  $("#startStatus").textContent = "очищаем работы…";
+  $("#lessonTimer").textContent = "";
+  startingWait = true;
   try {
     await ghResetWorks();
     await ghSetStart();
-    lessonStart = Date.now();
-    $("#startStatus").textContent = "занятие стартовало в " + new Date().toLocaleTimeString() + " · работы очищены";
-    toast("Занятие запущено");
+    lessonStart = 0;
+    $("#startStatus").textContent = "⏳ Ресетим… старт занятия через ~1 минуту (Pages пересобирает сайт)";
+    $("#lessonTimer").textContent = "⏱ ИДЁТ РЕСЕТ…";
+    toast("Работы очищены, старт через ~1 минуту");
     await pollWorks();
-    // Pages подхватит файл старта после сборки — дожидаемся для статуса
-    for (let i = 0; i < 12; i++) {
-      await sleep(8000);
+    let synced = false;
+    for (let i = 0; i < 30; i++) {
+      await sleep(5000);
       const s = await ghReadStart();
-      if (s) { $("#startStatus").textContent = "занятие стартовало в " + new Date(s.start).toLocaleTimeString() + " · страницы команд синхронизированы"; break; }
+      if (s) {
+        lessonStart = s.start;
+        $("#startStatus").textContent = "Занятие стартовало в " + new Date(s.start).toLocaleTimeString() + " · страницы команд синхронизированы";
+        synced = true;
+        break;
+      }
+    }
+    if (!synced) {
+      lessonStart = Date.now();
+      $("#startStatus").textContent = "⚠️ Pages не пересобрался за 2,5 мин — считаем с " + new Date().toLocaleTimeString();
     }
   } catch (e) {
+    lessonStart = 0;
     $("#startStatus").textContent = "Ошибка: " + e.message;
+    $("#lessonTimer").textContent = "";
   }
+  startingWait = false;
   btn.disabled = false; btn.textContent = "🚀 Начать занятие";
 };
 
