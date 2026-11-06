@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Работа команды 1</title>
+<style>
+body{margin:0;background:#0d1117;color:#e6edf3;font-family:Consolas,monospace;display:flex;justify-content:center}
+.wrap{text-align:center;padding:18px}
+h1{letter-spacing:4px;margin:0 0 10px;font-size:22px}
+.hud{display:flex;justify-content:space-between;max-width:420px;margin:0 auto 8px;font-size:16px}
+.p1{color:#2fbf71}.p2{color:#ff5d5d}
+canvas{border:2px solid #2fbf71;box-shadow:0 0 24px rgba(47,191,113,.25)}
+.hint{color:#8b949e;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap"><h1>ЗМЕЙКА ×2</h1><div class="hud"><span class="p1" id="s1">P1 · 0</span><span class="p2" id="s2">P2 · 0</span></div><canvas id="cv" width="420" height="420"></canvas><p class="hint">P1: WASD · P2: стрелки · Space — рестарт</p></div>
+<script>
+var cv=document.getElementById("cv"),x=cv.getContext("2d");
+var N=21,CS=20;
+var K1={w:[0,-1],a:[-1,0],s:[0,1],d:[1,0]};
+var K2={ArrowUp:[0,-1],ArrowLeft:[-1,0],ArrowDown:[0,1],ArrowRight:[1,0]};
+var s1,s2,d1,d2,nd1,nd2,food,over,score1,score2;
+function occ(px,py){return s1.some(function(c){return c.x===px&&c.y===py;})||s2.some(function(c){return c.x===px&&c.y===py;});}
+function spawn(){do{food={x:Math.random()*N|0,y:Math.random()*N|0};}while(occ(food.x,food.y));}
+function reset(){
+  s1=[{x:5,y:10},{x:4,y:10},{x:3,y:10}];d1={x:1,y:0};nd1=null;
+  s2=[{x:15,y:10},{x:16,y:10},{x:17,y:10}];d2={x:-1,y:0};nd2=null;
+  score1=0;score2=0;over=false;spawn();hud();draw();
+}
+function hud(){document.getElementById("s1").textContent="P1 · "+score1;document.getElementById("s2").textContent="P2 · "+score2;}
+document.addEventListener("keydown",function(e){
+  var k=e.key.length===1?e.key.toLowerCase():e.key;
+  if(K1[k])nd1=K1[k];
+  if(K2[k]){nd2=K2[k];e.preventDefault();}
+  if(k===" "){e.preventDefault();reset();}
+});
+function tick(){
+  if(over)return;
+  if(nd1){if(!(nd1[0]===-d1.x&&nd1[1]===-d1.y)){d1={x:nd1[0],y:nd1[1]};}nd1=null;}
+  if(nd2){if(!(nd2[0]===-d2.x&&nd2[1]===-d2.y)){d2={x:nd2[0],y:nd2[1]};}nd2=null;}
+  var h1={x:s1[0].x+d1.x,y:s1[0].y+d1.y};
+  var h2={x:s2[0].x+d2.x,y:s2[0].y+d2.y};
+  s1.unshift(h1);s2.unshift(h2);
+  var eat1=(h1.x===food.x&&h1.y===food.y);
+  var eat2=(h2.x===food.x&&h2.y===food.y);
+  if(!eat1)s1.pop();
+  if(!eat2)s2.pop();
+  function cellHit(c,sn,skip){for(var i=skip?1:0;i<sn.length;i++){if(sn[i].x===c.x&&sn[i].y===c.y)return true;}return false;}
+  function wallC(c){return c.x<0||c.x>=N||c.y<0||c.y>=N;}
+  if(wallC(h1)||wallC(h2)||cellHit(h1,s1,true)||cellHit(h2,s2,true)||cellHit(h1,s2,false)||cellHit(h2,s1,false)){over=true;draw();return;}
+  if(eat1){score1++;hud();}
+  if(eat2){score2++;hud();}
+  if(eat1||eat2)spawn();
+  draw();
+}
+function draw(){
+  x.fillStyle="#0d1117";x.fillRect(0,0,cv.width,cv.height);
+  x.strokeStyle="rgba(255,255,255,.04)";
+  for(var i=1;i<N;i++){x.beginPath();x.moveTo(i*CS,0);x.lineTo(i*CS,cv.height);x.stroke();x.beginPath();x.moveTo(0,i*CS);x.lineTo(cv.width,i*CS);x.stroke();}
+  x.fillStyle="#ffd23f";x.fillRect(food.x*CS+2,food.y*CS+2,CS-4,CS-4);
+  x.fillStyle="#2fbf71";s1.forEach(function(c){x.fillRect(c.x*CS+1,c.y*CS+1,CS-2,CS-2);});
+  x.fillStyle="#ff5d5d";s2.forEach(function(c){x.fillRect(c.x*CS+1,c.y*CS+1,CS-2,CS-2);});
+  if(over){
+    x.fillStyle="rgba(0,0,0,.75)";x.fillRect(0,0,cv.width,cv.height);
+    x.fillStyle="#fff";x.font="22px Consolas,monospace";x.textAlign="center";
+    var w=score1>score2?"ПОБЕДИЛ ИГРОК 1":(score2>score1?"ПОБЕДИЛ ИГРОК 2":"НИЧЬЯ");
+    x.fillText(w,cv.width/2,cv.height/2-10);
+    x.font="14px Consolas,monospace";x.fillStyle="#8b949e";
+    x.fillText("Space — сыграть ещё",cv.width/2,cv.height/2+20);
+    x.textAlign="left";
+  }
+}
+reset();
+setInterval(tick,130);
+</script>
+</body>
+</html>
