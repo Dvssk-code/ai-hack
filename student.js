@@ -83,7 +83,7 @@
     "    <div class='card done-box'>" +
     "      <div class='big-emoji'>✅</div>" +
     "      <h2>Работа сдана</h2>" +
-    "      <p class='muted'>QR-код вашей работы — покажите его преподавателю, он уже на большом экране. Если ссылка не открывается сразу — GitHub Pages собирает ~1 минуту.</p>" +
+    "      <p class='muted'>QR-код работы появится здесь, как только GitHub Pages подхватит файл (~1 минута). Потом покажите его преподавателю — он дублируется на пульте.</p>" +
     "      <div class='qr-wrap' id='doneQr'></div>" +
     "      <div class='muted mono-line' id='doneUrl'></div>" +
     "      <div class='actions' style='justify-content:center'>" +
@@ -325,17 +325,36 @@
     btn.disabled = false; btn.textContent = "📤 Проверили, работает — отправить работу";
   };
 
+  function renderQr(box, url) {
+    box.innerHTML = "";
+    try {
+      if (window.QRCode) new QRCode(box, { text: url, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
+      else box.innerHTML = "<p style='color:#000'>QR-библиотека не загрузилась (нужен интернет)</p>";
+    } catch (e) { box.innerHTML = "<p style='color:#000'>QR-ошибка</p>"; }
+  }
   function showDone(url) {
     $("#scrWork").hidden = true;
     $("#scrDone").hidden = false;
     $("#doneUrl").textContent = url;
     $("#openWork").href = url;
     const box = $("#doneQr");
-    box.innerHTML = "";
-    try {
-      if (window.QRCode) new QRCode(box, { text: url, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
-      else box.innerHTML = "<p style='color:#000'>QR-библиотека не загрузилась (нужен интернет)</p>";
-    } catch (e) { box.innerHTML = "<p style='color:#000'>QR-ошибка</p>"; }
+    box.innerHTML = "<div style='text-align:center;padding:30px 0'><div style='font-size:32px'>⏳</div><div style='margin-top:10px;font-size:15px;font-weight:600'>СОБИРАЕМ РАБОТУ… (~1 мин)</div><div style='margin-top:6px;font-size:13px;color:#44546a'>QR появится, как только GitHub Pages подхватит файл</div></div>";
     window.scrollTo({ top: 0 });
+    // QR показываем только когда работа реально на сайте (Pages собирает ~1 минуту)
+    let tries = 0;
+    (async () => {
+      while (tries < 45) {
+        await sleep(5000);
+        tries++;
+        if (await ghWorkLive(teamNo)) {
+          renderQr(box, url);
+          toast("Работа на сайте — QR готов!");
+          return;
+        }
+        box.innerHTML = "<div style='text-align:center;padding:30px 0'><div style='font-size:32px'>⏳</div><div style='margin-top:10px;font-size:15px;font-weight:600'>СОБИРАЕМ РАБОТУ… (~1 мин)</div><div style='margin-top:6px;font-size:13px;color:#44546a'>Pages пересобирает сайт · ожидание " + tries + " из 45</div></div>";
+      }
+      renderQr(box, url);
+      toast("QR показан — если ссылка пока не открывается, подождите минуту");
+    })();
   }
 })();
