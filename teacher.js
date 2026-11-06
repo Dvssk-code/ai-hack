@@ -171,8 +171,30 @@ $("#demoRunApp").onclick = () => {
   const full = "<!DOCTYPE html>\n<html lang=\"ru\">\n<head>\n<meta charset=\"UTF-8\">\n" +
     "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Симулятор гравитации</title>\n" +
     "<style>\n" + c + "\n</style>\n</head>\n<body>\n" + h + "\n<script>\n" + j + "\n<\/script>\n</body>\n</html>";
-  const url = URL.createObjectURL(new Blob([full], { type: "text/html" }));
-  window.open(url, "_blank") || toast("Браузер заблокировал новую вкладку");
+  let ov = document.getElementById("demoPrevOv");
+  if (ov) ov.remove();
+  ov = document.createElement("div");
+  ov.id = "demoPrevOv";
+  ov.style.cssText = "position:fixed;inset:0;z-index:200;background:#0d1117;display:flex;flex-direction:column";
+  ov.innerHTML =
+    "<div style='display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--navy);flex-wrap:wrap'>" +
+    "  <b style='color:#fff;font-size:14px;letter-spacing:1px'>▶ ДЕМО-ПРИЛОЖЕНИЕ</b>" +
+    "  <span style='color:#9fb4d8;font-size:12px'>показывайте на большом экране</span>" +
+    "  <span style='flex:1'></span>" +
+    "  <button class='btn sm' id='dpNew' type='button'>↗ Новая вкладка</button>" +
+    "  <button class='btn sm ghost' id='dpClose' type='button'>✖ Закрыть</button>" +
+    "</div>" +
+    "<iframe style='flex:1;width:100%;border:0;background:#fff'></iframe>";
+  document.body.appendChild(ov);
+  ov.querySelector("iframe").srcdoc = full;
+  ov.querySelector("#dpClose").onclick = () => ov.remove();
+  ov.querySelector("#dpNew").onclick = () => {
+    const url = URL.createObjectURL(new Blob([full], { type: "text/html" }));
+    window.open(url, "_blank") || toast("Браузер заблокировал новую вкладку");
+  };
+  document.addEventListener("keydown", function h(e) {
+    if (e.key === "Escape") { ov.remove(); document.removeEventListener("keydown", h); }
+  });
 };
 
 function dScroll() { const c = $("#demoMsgs"); c.scrollTop = c.scrollHeight; }
