@@ -83,6 +83,8 @@ async function readStart() {
   }
 }
 readStart();
+// пульт мог быть открыт до старта — подхватываем файл старта после сборки Pages
+setInterval(() => { if (!lessonStart) readStart(); }, 20000);
 setInterval(() => {
   if (!lessonStart) return;
   const left = CONFIG.timeLimit * 60 * 1000 - (Date.now() - lessonStart);
