@@ -126,3 +126,13 @@ async function ghReadStart() {
     return null; // старше суток — считаем старое
   } catch (e) { return null; }
 }
+
+// Файл работы команды реально уже на живом сайте? (Pages добирает ~1 минуту)
+async function ghWorkLive(group) {
+  const g = CONFIG.github;
+  if (!g.pagesBase) return false;
+  try {
+    const r = await fetch(g.pagesBase.replace(/\/?$/, "/") + "works/team" + group + ".html?_=" + Date.now(), { cache: "no-store" });
+    return r.ok;
+  } catch (e) { return false; }
+}
