@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI-Hack · Пульт преподавателя</title>
-<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../style.css?v=4">
 </head>
 <body>
 <div class="bg"></div>
@@ -20,10 +20,45 @@
   <h1>Пульт оператора хакатона</h1>
   <p class="lead" id="ghStatus">Подключаюсь к GitHub…</p>
 
-  <!-- 01 · КОМАНДЫ -->
+  <!-- 01 · ПЛАН ЗАНЯТИЯ -->
   <section class="sec">
     <div class="sec-head">
       <span class="sec-num">01</span>
+      <h2 class="sec-title">План занятия · как работает платформа</h2>
+      <span class="sec-sub">полный разбор для преподавателя</span>
+    </div>
+    <div class="card">
+      <div class="plan-cols">
+        <div>
+          <div class="mono-tag">СТРАНИЦА КОМАНДЫ — ЧТО ВИДИТ СТУДЕНТ</div>
+          <ol class="plan-list">
+            <li>Студент открывает <b>одну общую ссылку</b> (секция 02) и выбирает карточку своей команды 1/2/3 — дальше всё на странице команды.</li>
+            <li>Сверху — <b>задание и требования жюри</b>. Таймер ⏱ в шапке общий для всех команд: стартует после «🚀 Начать занятие» (секция 04), синхронизируется даже на уже открытых страницах.</li>
+            <li>Слева — <b>редактор</b> (index.html / style.css / script.js). «▶ Запустить» открывает превью приложения прямо на странице — его можно потрогать с телефона, без новых вкладок.</li>
+            <li>Справа — <b>чат с нейронкой ВЕГА</b>: описывают задачу словами → получают работающий код → кнопка «⚡ Вставить в редактор». Три такие попытки; на четвёртой ВЕГА выдаёт финальный код и отключается.</li>
+            <li>«📤 Проверили, работает — отправить работу» — работа уходит на GitHub Pages. QR-код появляется на странице команды и на этом пульте через ~1 минуту, когда Pages подхватит файл.</li>
+            <li>Если код вставлен не полностью — приложение само покажет «⚠️ Приложение не запустилось» и перечислит, чего не хватает. Студенту остаётся переклеить код целиком из чата.</li>
+          </ol>
+        </div>
+        <div>
+          <div class="mono-tag">ПЛАН ЗАНЯТИЯ — ВАШИ ШАГИ</div>
+          <ol class="plan-list">
+            <li><b>До старта</b> — прогоните демо-стенд (секция 03): покажите классу «промт → ВЕГА пишет код → приложение запускается». Рассказ ведёте сами; стенд показывает только промты и ответы ВЕГИ.</li>
+            <li><b>Раздача ссылок</b> — единый QR (секция 02): студенты сканируют и выбирают свою команду.</li>
+            <li><b>Старт</b> — «🚀 Начать занятие» (секция 04): работы сброшены, общий таймер 15:00 пошёл. Студенты могут открывать страницы когда угодно — таймер подхватится сам.</li>
+            <li><b>Первые минуты</b> — команды формулируют первое описание задачи. Помогите сформулировать промт: что за объект, какие правила, что на экране, как управляется.</li>
+            <li><b>Середина</b> — попытки 2–3, доработка приложения. Когда работы сдаются, на пульте (секция 04) появляются QR-коды: сначала «сдана · собирается», затем «на сайте».</li>
+            <li><b>Финал</b> — таймер вышел: четвёртая попытка, нейронка отключена, у команд финальный код. Проверяют, отправляют. Итог — три QR-кода на пульте: сканируете и рассматриваете работы вместе с классом.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · КОМАНДЫ -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
       <h2 class="sec-title">Команды</h2>
       <span class="sec-sub">одна ссылка для всех · страницы команд</span>
     </div>
@@ -75,13 +110,14 @@
     </div>
   </section>
 
-  <!-- 02 · ДЕМО-СТЕНД -->
+  <!-- 03 · ДЕМО-СТЕНД -->
   <section class="sec">
     <div class="sec-head">
-      <span class="sec-num">02</span>
+      <span class="sec-num">03</span>
       <h2 class="sec-title">Демо-стенд нейронки</h2>
-      <span class="sec-sub">показ класса · по скрипту · 0 токенов</span>
+      <span class="sec-sub">показ класса · 0 токенов</span>
     </div>
+    <div class="muted" style="margin:-6px 0 10px">Рассказ ведёте вы сами на своём примере — стенд показывает только промты и ответы ВЕГИ, реплик преподавателя нет.</div>
     <div class="actions">
       <button class="btn" id="demoRun" type="button">▶ Прогнать сценарий</button>
       <button class="btn ghost" id="demoReset" type="button">🧹 Сбросить демо</button>
@@ -122,10 +158,10 @@
     </div>
   </section>
 
-  <!-- 03 · РАБОТЫ И СТАРТ -->
+  <!-- 04 · РАБОТЫ И СТАРТ -->
   <section class="sec">
     <div class="sec-head">
-      <span class="sec-num">03</span>
+      <span class="sec-num">04</span>
       <h2 class="sec-title">Работы и старт занятия</h2>
       <span class="sec-sub">QR появляются, когда команды отправляют работы</span>
     </div>
@@ -167,12 +203,12 @@
 <footer class="foot">AI-HACK PLATFORM · пульт оператора · работы обновляются каждые 8 секунд</footer>
 <div id="toast"></div>
 
-<script src="../tasks.js"></script>
-<script src="../config.js"></script>
-<script src="../github.js"></script>
-<script src="../ai.js"></script>
-<script src="../bot.js"></script>
+<script src="../tasks.js?v=4"></script>
+<script src="../config.js?v=4"></script>
+<script src="../github.js?v=4"></script>
+<script src="../ai.js?v=4"></script>
+<script src="../bot.js?v=4"></script>
 <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-<script src="../teacher.js"></script>
+<script src="../teacher.js?v=4"></script>
 </body>
 </html>
