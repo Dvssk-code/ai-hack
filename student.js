@@ -26,7 +26,7 @@
     "  </div>" +
     "</header>" +
     "<div class='wrap'>" +
-    "  <div class='final-banner' id='finalBanner' hidden>ФИНАЛЬНАЯ ПОПЫТКА · нейронка отключена — работайте с кодом и сдавайте работу</div>" +
+    "  <div class='final-banner' id='finalBanner' hidden>ЛИМИТ ЗАПРОСОВ ИСЧЕРПАН · финальный код в чате — работайте с ним и сдавайте работу</div>" +
     "  <section id='scrWork'>" +
     "    <div class='card task-band'>" +
     "      <div class='tb-left'>" +
@@ -65,7 +65,7 @@
     "          <div class='pane-title'>🤖 НЕЙРОНКА · ВЕГА</div>" +
     "          <div class='actions' style='margin:0'>" +
     "            <span class='badge' id='attemptBadge'>ПОПЫТКА 0/" + MAX_TRIES + "</span>" +
-    "            <span class='chip' id='aiState'>" + (aiReady() ? "🟢 онлайн" : "🟡 перезагрузка") + "</span>" +
+    "            <span class='chip' id='aiState'>🟢 онлайн</span>" +
     "          </div>" +
     "        </div>" +
     "        <div class='chat'>" +
@@ -237,9 +237,9 @@
     $("#finalBanner").hidden = false;
     $("#chatInput").disabled = true;
     $("#chatSend").disabled = true;
-    $("#chatInput").placeholder = "Нейронка отключена — финальная попытка";
-    $("#aiState").textContent = "⛔ отключена";
-    $("#attemptBadge").textContent = "ФИНАЛ · " + (MAX_TRIES + 1) + "/" + (MAX_TRIES + 1);
+    $("#chatInput").placeholder = "Лимит запросов исчерпан";
+    $("#aiState").textContent = "⛔ лимит исчерпан";
+    $("#attemptBadge").textContent = "ЛИМИТ · " + (MAX_TRIES + 1) + "/" + (MAX_TRIES + 1);
   }
 
   async function sendChat(rawText) {
@@ -275,8 +275,6 @@
     btn.disabled = false;
     if (res._err) {
       $("#aiState").textContent = "🟡 перезагрузка";
-    } else if (!aiReady()) {
-      // ключ не настроен — честно, но без спойлеров
     } else {
       $("#aiState").textContent = "🟢 онлайн";
     }
