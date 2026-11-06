@@ -239,3 +239,10 @@ body.final-mode .top{border-bottom:3px solid var(--amber)}
 .rl-qr img,.rl-qr canvas{display:block;border:1px solid var(--line);border-radius:4px;padding:5px;background:#fff}
 .rl-body{flex:1;min-width:260px}
 .rl-url{font-size:13px;color:var(--navy);margin:4px 0 6px;word-break:break-all}
+
+/* ============ План занятия (пульт) ============ */
+.plan-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:900px){.plan-cols{grid-template-columns:1fr}}
+.plan-list{margin:8px 0 0;padding-left:18px;line-height:1.65;font-size:13px}
+.plan-list li{margin-bottom:8px}
+.plan-list b{color:var(--navy)}
