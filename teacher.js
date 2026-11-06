@@ -35,19 +35,32 @@ function pageQr(id) {
 
 // ---------- 03 · работы ----------
 function workUrl(id) { return BASE + "works/team" + id + ".html"; }
+// работа в репозитории ≠ на сайте: Pages добирает файл ~1 минуту
+let workLive = {};
 function renderWork(id, meta) {
   const wait = $("#workWait" + id), slot = $("#workQr" + id), urlEl = $("#workUrl" + id), ts = $("#teamStatus" + id);
   if (meta) {
+    urlEl.textContent = workUrl(id);
+    if (!workLive[id]) {
+      wait.hidden = false;
+      wait.textContent = "⏳ СДАНА · СОБИРАЕТСЯ НА САЙТЕ (~1 МИН)";
+      slot.hidden = true;
+      slot.innerHTML = "";
+      ts.textContent = "работа: сдана · сборка Pages…";
+      ts.className = "tc-status status-wait";
+      return;
+    }
     wait.hidden = true;
     slot.hidden = false;
     slot.innerHTML = "";
     if (window.QRCode) new QRCode(slot, { text: workUrl(id), width: 190, height: 190, correctLevel: QRCode.CorrectLevel.M });
     else slot.innerHTML = "<p style='color:#000'>QR н/д</p>";
-    urlEl.textContent = workUrl(id);
-    ts.textContent = "работа: сдана · обновлена " + new Date(meta.updated).toLocaleTimeString();
+    ts.textContent = "работа: на сайте · обновлена " + new Date(meta.updated).toLocaleTimeString();
     ts.className = "tc-status status-ok";
   } else {
+    workLive[id] = false;
     wait.hidden = false;
+    wait.textContent = "ОЖИДАНИЕ РАБОТЫ";
     slot.hidden = true;
     slot.innerHTML = "";
     urlEl.textContent = "";
@@ -59,9 +72,18 @@ async function pollWorks() {
   try {
     const r = await ghListWorks();
     let ok = 0;
-    [1, 2, 3].forEach(id => { if (r.works[id]) ok++; renderWork(id, r.works[id] || null); });
-    $("#ghStatus").textContent = ok ? "Сдано работ: " + ok + " из 3 · " + new Date().toLocaleTimeString() : "Сдано работ: 0 из 3 — ждём команды";
-    $("#ghStatusChip").textContent = ok ? "🟢 " + ok + "/3 работ" : "🟡 0/3 работ";
+    for (const id of [1, 2, 3]) {
+      if (r.works[id]) {
+        ok++;
+        workLive[id] = await ghWorkLive(id);
+      } else {
+        workLive[id] = false;
+      }
+      renderWork(id, r.works[id] || null);
+    }
+    const live = [1, 2, 3].filter(id => workLive[id]).length;
+    $("#ghStatus").textContent = ok ? ("Сдано работ: " + ok + " из 3 · на сайте: " + live + " · " + new Date().toLocaleTimeString()) : "Сдано работ: 0 из 3 — ждём команды";
+    $("#ghStatusChip").textContent = live ? "🟢 " + live + "/3 на сайте" : (ok ? "🟡 " + ok + "/3 сдаёт" : "🟡 0/3 работ");
   } catch (e) {
     $("#ghStatus").textContent = "Связь с GitHub неустойчива: " + e.message;
     $("#ghStatusChip").textContent = "🔴 ошибка";
