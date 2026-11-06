@@ -167,7 +167,7 @@ $("#demoClear").onclick = () => {
 };
 $("#demoRunApp").onclick = () => {
   const h = $("#demoEdHtml").value, c = $("#demoEdCss").value, j = $("#demoEdJs").value;
-  if (h.length + c.length + j.length < 100) { toast("Сначала прогоните сценарий — код вставится сам"); return; }
+  if (h.length + c.length + j.length < 100) { toast("Сначала прогоните показ — код вставится сам"); return; }
   const full = "<!DOCTYPE html>\n<html lang=\"ru\">\n<head>\n<meta charset=\"UTF-8\">\n" +
     "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Симулятор гравитации</title>\n" +
     "<style>\n" + c + "\n</style>\n</head>\n<body>\n" + h + "\n<script>\n" + j + "\n<\/script>\n</body>\n</html>";
@@ -229,7 +229,7 @@ function dBot(text, code) {
   $("#demoMsgs").appendChild(d); dScroll();
 }
 function dTyping(on) { $("#demoTyping").hidden = !on; }
-dMsg("bot", "Демо-стенд готов. Жмите «▶ Прогнать сценарий» — покажу классу, как команды собирают приложение.", "ВЕГА · НЕЙРОНКА");
+dMsg("bot", "Демо готово. Жмите «▶ Прогнать показ» — покажу классу, как команды собирают приложение.", "ВЕГА · НЕЙРОНКА");
 
 let demoBusy = false;
 async function runScenario() {
@@ -237,7 +237,7 @@ async function runScenario() {
   demoBusy = true;
   $("#demoRun").disabled = true;
   $("#demoReset").disabled = true;
-  $("#demoState").textContent = "СЦЕНАРИЙ ИДЁТ";
+  $("#demoState").textContent = "ПОКАЗ ИДЁТ";
   for (const step of DEMO_STEPS) {
     if (step.t === "teacher") {
       await sleep(900);
@@ -251,7 +251,12 @@ async function runScenario() {
       dBot(step.reply, step.code ? demoCode(step.code) : null);
     }
   }
-  $("#demoState").textContent = "СЦЕНАРИЙ ЗАВЕРШЁН";
+  $("#demoState").textContent = "ПОКАЗ ЗАВЕРШЁН";
+  const lastCode = demoCode("final");
+  $("#demoEdHtml").value = lastCode.html;
+  $("#demoEdCss").value = lastCode.css;
+  $("#demoEdJs").value = lastCode.js;
+  toast("Код в демо-редакторе — жмите «▶ Запустить»");
   $("#demoRun").disabled = false;
   $("#demoReset").disabled = false;
   demoBusy = false;
@@ -261,8 +266,8 @@ $("#demoReset").onclick = () => {
   if (demoBusy) return;
   $("#demoMsgs").innerHTML = "";
   $("#demoEdHtml").value = ""; $("#demoEdCss").value = ""; $("#demoEdJs").value = "";
-  $("#demoState").textContent = "ГОТОВ К ПРОГОНУ";
-  dMsg("bot", "Демо-стенд готов. Жмите «▶ Прогнать сценарий» — покажу классу, как команды собирают приложение.", "ВЕГА · НЕЙРОНКА");
+  $("#demoState").textContent = "ГОТОВ К ПОКАЗУ";
+  dMsg("bot", "Демо готово. Жмите «▶ Прогнать показ» — покажу классу, как команды собирают приложение.", "ВЕГА · НЕЙРОНКА");
 };
 
 // свободный ввод в демо — без API
@@ -274,7 +279,7 @@ function demoManual() {
   dTyping(true);
   setTimeout(() => {
     dTyping(false);
-    dBot("Демо-режим: свободные вопросы не обрабатываю — это сценарный стенд. Для полного прогона жмите «▶ Прогнать сценарий».", null);
+    dBot("Демо-режим: свободные вопросы не обрабатываю — для показа классу жмите «▶ Прогнать показ».", null);
   }, 1200);
 }
 $("#demoSend").onclick = demoManual;
