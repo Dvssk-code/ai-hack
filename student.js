@@ -146,22 +146,26 @@
 
   // ================= таймер (синхрон с пультом препода) =================
   let startedAt = Date.now();
-  (async () => {
-    const st = await ghReadStart();
-    if (st) {
-      startedAt = st.start;
-      localStorage.removeItem("hack_start_g" + teamNo);
-      return;
-    }
+  let syncedStart = false;
+  async function syncStart() {
+    try {
+      const s = await ghReadStart();
+      // первый подхват или новый старт (препода нажал «Начать занятие») — пересинхронизируемся
+      if (s && (!syncedStart || s.start > startedAt)) {
+        startedAt = s.start;
+        syncedStart = true;
+        localStorage.removeItem("hack_start_g" + teamNo);
+      }
+    } catch (e) {}
+  }
+  syncStart();
+  if (!syncedStart) {
     startedAt = +localStorage.getItem("hack_start_g" + teamNo) || Date.now();
     localStorage.setItem("hack_start_g" + teamNo, String(startedAt));
-    // Pages подхватит новый файл старта ~через минуту — дожидаемся и синхронизируемся
-    for (let i = 0; i < 18; i++) {
-      await sleep(10000);
-      const s2 = await ghReadStart();
-      if (s2) { startedAt = s2.start; localStorage.removeItem("hack_start_g" + teamNo); return; }
-    }
-  })();
+  }
+  // Pages подхватывает файл старта после сборки (~1 мин) — опрашиваем постоянно,
+  // чтобы таймер перезапустился даже если страница команды уже открыта
+  setInterval(syncStart, 10000);
   setInterval(() => {
     const left = MAXT - (Date.now() - startedAt);
     const el = $("#timerChip");
